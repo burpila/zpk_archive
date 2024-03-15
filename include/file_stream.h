@@ -14,31 +14,17 @@ namespace zpk
 		~FileStream() noexcept = default;
 
 		void open(const std::string& path) noexcept;
-
 		void close() noexcept;
+
 		void setSeek(const uint32_t& position) noexcept;
-
-		bool isOpen() const noexcept;
-
-		const std::vector<uint8_t> getData() const noexcept;
 
 		template <class _T>
 		_T read() noexcept
 		{
-			if constexpr (std::is_pointer<_T>::value)
-			{
-				_T* value = new _T();
-				std::memcpy(&value, data.data() + offset, sizeof(_T));
-				m_offset += sizeof(_T);
-				return value;
-			}
-			else
-			{
-				_T value;
-				std::memcpy(&value, data.data() + offset, sizeof(_T));
-				m_offset += sizeof(_T);
-				return value;
-			}
+			_T value;
+			std::memcpy(&value, m_data.data() + m_offset, sizeof(_T));
+			m_offset += sizeof(_T);
+			return value;
 		}
 
 		template <>
@@ -79,8 +65,11 @@ namespace zpk
 		}
 
 		std::vector<uint8_t> read(const uint32_t& size, const uint32_t& offset) noexcept;
-
 		std::vector<uint8_t> read(const std::string& path, FileHandle* file) noexcept;
+
+		bool isOpen() const noexcept;
+
+		const std::vector<uint8_t> getData() const noexcept;
 	private:
 		std::vector<uint8_t> m_data {};
 		uint32_t m_offset = 0;

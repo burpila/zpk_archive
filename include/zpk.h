@@ -9,11 +9,11 @@
 * 
 *		License
 *		-------
-*		PASTE LICENSE INFORMATION
+*		GPL-3.0
 * 
 *		Links
 *		-----
-*		GitHub: https://github.com/mator1239
+*		GitHub: https://github.com/burpila
 * 
 *		Authors
 *		-------

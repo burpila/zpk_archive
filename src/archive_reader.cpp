@@ -10,7 +10,7 @@ namespace zpk
 	Archive* ArchiveReader::read(Archive* archive, const std::string& path)
 	{
 		FileStream stream(path);
-		archive->m_header = ArchiveHeader_t{ stream.read<uint32_t>(), stream.read<uint32_t>() };
+		archive->m_header = stream.read<ArchiveHeader_t>();
 
 		uint32_t directory_count = stream.read<uint16_t>();
 		for (int i = 0; i < directory_count; i++)

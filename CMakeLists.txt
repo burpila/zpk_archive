@@ -17,6 +17,7 @@ set(headers
 	include/archive_reader.h
 	include/archive_writer.h
 	include/file_stream.h
+	include/file_handle.h
 	include/utils.h
 	include/zpk.h
 	include/zpk_config.h)
@@ -25,6 +26,7 @@ set(sources
 	src/archive_writer.cpp
 	src/archive_reader.cpp
 	src/file_stream.cpp
+	src/file_handle.cpp
 	src/utils.cpp
 	src/archive.cpp)
 	

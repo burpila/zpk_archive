@@ -50,13 +50,13 @@ namespace zpk
 		return std::vector<uint8_t>();
 	}
 
-	std::vector<uint8_t> FileStream::read(const std::string& path,
-		const uint32_t& size, const uint32_t& offset) noexcept
+	std::vector<uint8_t> FileStream::read(const std::string& path, FileHandle* file) noexcept
 	{
 		std::ifstream file_stream(path, std::ios::ate | std::ios::binary);
 		ZPK_RETURN(!file_stream.is_open(), {});
 
-		file_stream.seekg(offset);
+		const uint32_t size = file->getSize();
+		file_stream.seekg(file->getOffset());
 		m_data.resize(size);
 
 		file_stream.read(reinterpret_cast<char*>(m_data.data()), size);

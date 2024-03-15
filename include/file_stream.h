@@ -1,6 +1,7 @@
 #ifndef _FILE_STREAM_H
 #define _FILE_STREAM_H
 #include "zpk_config.h"
+#include "file_handle.h"
 
 namespace zpk
 {
@@ -79,8 +80,7 @@ namespace zpk
 
 		std::vector<uint8_t> read(const uint32_t& size, const uint32_t& offset) noexcept;
 
-		std::vector<uint8_t> read(const std::string& path, 
-			const uint32_t& size, const uint32_t& offset) noexcept;
+		std::vector<uint8_t> read(const std::string& path, FileHandle* file) noexcept;
 	private:
 		std::vector<uint8_t> m_data {};
 		uint32_t m_offset = 0;

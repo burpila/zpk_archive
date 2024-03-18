@@ -5,18 +5,38 @@
 
 namespace zpk
 {
+	using OpenMode = std::ios::openmode;
+
+	template <class>
+	constexpr bool is_uint8_vector_v = false;
+
+	template <>
+	constexpr bool is_uint8_vector_v<std::vector<uint8_t>> = true;
+
 	class FileStream
 	{
 	public:
 		explicit FileStream() noexcept = default;
 		explicit FileStream(const std::string& path) noexcept;
+		explicit FileStream(const std::string& path, const OpenMode& mode) noexcept;
 		explicit FileStream(const std::string& path, const uint32_t& size, const uint32_t& offset) noexcept;
-		~FileStream() noexcept = default;
+		~FileStream() noexcept;
 
-		void open(const std::string& path) noexcept;
+		size_t open(const std::string& path, const OpenMode& mode = std::ios::ate | std::ios::binary) noexcept;
 		void close() noexcept;
 
 		void setSeek(const uint32_t& position) noexcept;
+
+		template <class _T>
+		void write(const _T& value, const size_t& size = sizeof(_T))
+		{
+			if constexpr (is_uint8_vector_v<_T>)
+				m_file.write(reinterpret_cast<const char*>(value.data()), value.size());
+			else if constexpr (std::is_same_v<_T, std::string>)
+				m_file.write(value.data() + '\0', value.size() + 1);
+			else
+				m_file.write(reinterpret_cast<const char*>(&value), size);
+		}
 
 		template <class _T>
 		_T read() noexcept
@@ -72,6 +92,7 @@ namespace zpk
 		const std::vector<uint8_t> getData() const noexcept;
 	private:
 		std::vector<uint8_t> m_data {};
+		std::fstream m_file = {};
 		uint32_t m_offset = 0;
 	};
 }

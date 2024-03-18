@@ -4,7 +4,8 @@ namespace zpk
 {
 	Archive* ArchiveReader::read(const std::string& path)
 	{
-		return nullptr;
+		Archive* archive = new Archive(path);
+		return read(archive, path);
 	}
 
 	Archive* ArchiveReader::read(Archive* archive, const std::string& path)

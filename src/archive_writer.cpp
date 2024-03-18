@@ -51,10 +51,10 @@ namespace zpk
 
 	bool ArchiveWriter::finalize(const std::string& name, Archive* archive)
 	{
-		std::ofstream file_stream(name, std::ios::trunc | std::ios::binary);
-		ZPK_RETURN(!file_stream.is_open(), false);
+		FileStream stream(name, std::ios::trunc | std::ios::binary | std::ios::out);
+		ZPK_RETURN(!stream.isOpen(), false);
 
-		file_stream.write(reinterpret_cast<const char*>(&archive->m_header), sizeof(ArchiveHeader_t));
+		stream.write(archive->m_header);
 
 		uint16_t directories_count = archive->m_paths.size();
 		uint16_t files_count = archive->getFilesCount();
@@ -67,21 +67,21 @@ namespace zpk
 			+ files_count * sizeof(uint64_t)
 			+ getDirectoryAndFilesSize(archive);
 
-		file_stream.write(reinterpret_cast<const char*>(&directories_count), sizeof(uint16_t));
+		stream.write(directories_count);
 		for (const auto& [path, directory] : archive->m_paths)
 		{
 			uint16_t files_count = directory.size();
 
-			file_stream.write(path.data() + '\0', path.size() + 1);
-			file_stream.write(reinterpret_cast<const char*>(&files_count), sizeof(uint16_t));
+			stream.write(path);
+			stream.write(files_count);
 
 			for (const auto& [name, file] : directory)
 			{
 				uint32_t size = file->getSize();
 
-				file_stream.write(name.data() + '\0', name.size() + 1);
-				file_stream.write(reinterpret_cast<const char*>(&size), sizeof(uint32_t));
-				file_stream.write(reinterpret_cast<const char*>(&base_offset), sizeof(uint32_t));
+				stream.write(name);
+				stream.write(size);
+				stream.write(base_offset);
 				file->setOffset(base_offset);
 				base_offset += size;
 			}
@@ -94,9 +94,7 @@ namespace zpk
 				Archive::FileDirectory* file_directory = static_cast<Archive::FileDirectory*>(file);
 
 				auto data = file_directory->getData();
-				uint32_t size = file_directory->getSize();
-
-				file_stream.write(reinterpret_cast<const char*>(data.data()), size);
+				stream.write(data);
 				file_directory->clear();
 			}
 		}
